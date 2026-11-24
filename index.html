@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ARIRANG 隨機歌統計</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#fff6fb;--card:#ffffff;--ink:#4a3b5c;--sub:#9a8aa8;--line:#f0dff0;--main:#b79df0;--btn:#ffe1ef;
+--c0:#ffb3d1;--c1:#b9e3ff;--c2:#ffe59a;--c3:#c8f0c0;--c4:#d9c4ff;--c5:#ffc9a8}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;
+--bg:#241d33;--card:#322846;--ink:#f6eefc;--sub:#b9a9cc;--line:#47395f;--main:#b79df0;--btn:#4a3a63}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"PingFang TC","Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.5}
+main{max-width:520px;margin:0 auto;padding:16px 14px 40px}
+h1{margin:6px 0 2px;font-size:clamp(13px,4.3vw,22px);white-space:nowrap;text-align:center}
+.sub{text-align:center;color:var(--sub);font-size:13px;margin:0 0 14px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:20px;padding:12px;margin-bottom:12px}
+label{font-size:13px;color:var(--sub);display:block;margin-bottom:4px}
+.row{display:flex;gap:8px}
+input{flex:1;min-width:0;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:9px 12px}
+input:focus{outline:none;border-color:var(--main)}
+.go{border:0;background:var(--main);color:#fff;font:inherit;font-weight:700;border-radius:14px;padding:0 16px;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{border:2px solid var(--line);background:var(--btn);color:var(--ink);border-radius:999px;padding:3px 10px;font:inherit;font-size:13px;cursor:pointer}
+.chip.on{background:var(--main);color:#fff;border-color:var(--main)}
+.stats{display:flex;justify-content:space-around;text-align:center}
+.stats b{display:block;font-size:24px}
+.stats span{font-size:12px;color:var(--sub)}
+.bar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.name{font-weight:700;font-size:16px;word-break:break-all}
+.del{border:0;background:none;color:var(--sub);font-size:18px;cursor:pointer;padding:0 4px}
+.del.ask{color:#e0457b;font-size:13px;font-weight:700}
+.album{display:block;border:0;background:none;padding:0;margin-top:2px;font:inherit;font-size:12px;color:var(--main);cursor:pointer;text-align:left}
+.album.none{color:var(--sub)}
+.ain{width:100%;font-size:14px;padding:4px 8px;margin-top:2px}
+.nbtn{display:block;border:0;background:none;padding:0;font:inherit;font-weight:700;font-size:16px;color:var(--ink);text-align:left;cursor:pointer;word-break:break-all}
+.nin{width:100%;font-size:16px;padding:4px 8px}
+.track{background:var(--bg);border-radius:999px;height:26px;overflow:hidden}
+.fill{height:100%;border-radius:999px;min-width:0;transition:width .3s;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;font-size:13px;font-weight:700;color:#4a3b5c}
+.ctl{display:flex;align-items:center;gap:10px;margin-top:8px}
+.ctl button{width:40px;height:40px;border-radius:50%;border:0;background:var(--btn);color:var(--ink);font-size:22px;font-weight:700;cursor:pointer}
+.ctl button.plus{background:var(--main);color:#fff}
+.cnt{min-width:34px;text-align:center;font-size:20px;font-weight:800}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin-left:auto;justify-content:flex-end}
+.tag{font-size:12px;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--sub)}
+.tools{display:flex;justify-content:flex-end;margin:0 2px 8px}
+.tools button{border:0;background:none;color:var(--main);font:inherit;font-size:13px;cursor:pointer}
+.empty{text-align:center;color:var(--sub);padding:24px 0}
+.msg{color:#e0457b;font-size:13px;font-weight:700;margin-top:6px}
+.flash{border-color:var(--main);box-shadow:0 0 0 3px var(--main)}
+button.tag{font:inherit;font-size:12px;cursor:pointer}
+.ctl button.tag{width:auto;height:auto;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--sub);font-size:12px;font-weight:400;padding:1px 8px;text-align:left}
+.ctl button.tag.ask{color:#e0457b;border-color:#e0457b;font-weight:700}
+.tag.ask{color:#e0457b;border-color:#e0457b;font-weight:700}
+textarea{width:100%;margin-top:8px;font:inherit;font-size:13px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:9px 12px}
+</style>
+</head>
+<body>
+<main>
+<h1>💜 BTS ARIRANG  TOUR 隨機歌曲統計 💜</h1>
+<p class="sub">記錄每首隨機歌出現了幾次、在哪一場</p>
+
+<div class="card">
+  <label for="city">選擇城市與日期，在以下欄位輸入歌曲</label>
+  <div class="row"><input id="city" placeholder="城市，例：高陽" autocomplete="off"><input id="cdate" type="date"></div>
+  <select id="concertSel" style="width:100%;margin-top:8px;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:9px 12px"></select>
+</div>
+
+<div class="card">
+  <label for="newSong">新增歌曲</label>
+  <div class="row">
+    <input id="newSong" placeholder="輸入歌名" autocomplete="off">
+    <button class="go" id="addBtn">新增</button>
+  </div>
+  <div class="msg" id="msg"></div>
+</div>
+
+<div class="card stats" style="display:none">
+  <div><b id="sSongs">0</b><span>歌曲數</span></div>
+  <div><b id="sTotal">0</b><span>總次數</span></div>
+  <div><b id="sTop">-</b><span>最常出現</span></div>
+</div>
+
+<div class="card"><label>點選城市日期查詢歌曲</label><select id="filterChips" style="width:100%;font:inherit;font-size:16px;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:9px 12px"></select></div>
+<div class="tools"><button id="sortBtn">排序：依次數 ↓</button></div>
+<div id="list"></div>
+
+<div class="card">
+  <label>備份與還原（資料存在本機瀏覽器，也可貼上 JSON 還原）</label>
+  <div class="row"><button class="go" id="expBtn" style="flex:1;padding:10px">匯出備份</button><button class="go" id="impBtn" style="flex:1;padding:10px">匯入還原</button></div>
+  <textarea id="bk" rows="4" placeholder="按「匯出備份」後，把這段文字存到備忘錄。要還原時貼在這裡再按「匯入還原」"></textarea>
+</div>
+</main>
+
+<script>
+var COLORS=["var(--c0)","var(--c1)","var(--c2)","var(--c3)","var(--c4)","var(--c5)"];
+var state={songs:[],concert:"",sort:true};
+try{var saved=localStorage.getItem("arirang-v1");if(saved){state=Object.assign(state,JSON.parse(saved));}}catch(e){}
+function save(){state.ts=Date.now();try{localStorage.setItem("arirang-v1",JSON.stringify(state));}catch(e){}}
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+function concerts(){var set={};state.songs.forEach(function(s){s.log.forEach(function(c){if(c)set[c]=1;});});if(state.concert)set[state.concert]=1;return Object.keys(set);}
+function lg(s){return state.filter?s.log.filter(function(c){return c===state.filter;}):s.log;}
+function tally(log){var m={};log.forEach(function(c){var k=c||"未註明";m[k]=(m[k]||0)+1;});return m;}
+
+function render(){
+  var ci0=document.getElementById("city"),di0=document.getElementById("cdate");
+  if(document.activeElement!==ci0)ci0.value=state.city||"";
+  if(document.activeElement!==di0)di0.value=state.date||"";
+  var cs=concerts().map(function(c){var i=c.lastIndexOf(" "),m=c.slice(i+1).match(/^(\d+)\/(\d+)\/(\d+)$/),city=i<0?"":c.slice(0,i);return {c:c,d:m?(+m[1])*10000+(+m[2])*100+(+m[3]):99999999,lab:m?(m[0]+(city?" "+city:"")):c};}).sort(function(a,b){return a.d-b.d;});
+  var all=concerts();PRESETS.forEach(function(p){if(all.indexOf(p)<0)all.push(p);});
+  var cs2=all.map(cinfo).sort(function(a,b){return a.d-b.d;});
+  document.getElementById("concertSel").innerHTML='<option value="">選擇城市與日期</option>'+cs2.map(function(o){return '<option value="'+esc(o.c).replace(/"/g,"&quot;")+'"'+(o.c===state.concert?' selected':'')+'>'+esc(o.lab)+'</option>';}).join("");
+  if(state.filter&&concerts().indexOf(state.filter)<0)state.filter="";
+  document.getElementById("filterChips").innerHTML='<option value="">全部場次</option>'+cs.map(function(o){return '<option value="'+esc(o.c).replace(/"/g,"&quot;")+'"'+(o.c===state.filter?' selected':'')+'>'+esc(o.lab)+'</option>';}).join("");
+  var songs=state.songs.filter(function(s){return !state.filter||lg(s).length>0;});
+  if(state.sort)songs.sort(function(a,b){return lg(b).length-lg(a).length;});
+  var max=Math.max.apply(null,[1].concat(songs.map(function(s){return lg(s).length;})));
+  var total=songs.reduce(function(n,s){return n+lg(s).length;},0);
+  document.getElementById("sSongs").textContent=songs.length;
+  document.getElementById("sTotal").textContent=total;
+  var top=songs.slice().sort(function(a,b){return lg(b).length-lg(a).length;})[0];
+  document.getElementById("sTop").textContent=top&&lg(top).length?top.name:"-";
+  document.getElementById("sortBtn").textContent=state.sort?"排序：依次數 ↓":"排序：依新增順序";
+  var list=document.getElementById("list");
+  if(!songs.length){list.innerHTML='<div class="empty">還沒有歌曲，先新增第一首吧 ✨</div>';return;}
+  list.innerHTML=songs.map(function(s){
+    var n=lg(s).length,w=Math.round(n/max*100);
+    var t=tally(lg(s)),tags=Object.keys(t).map(function(k){var pk=s.id+"|"+k,ask=pendingTag===pk;return '<button class="tag'+(ask?' ask':'')+'" data-a="deltag" data-id="'+s.id+'" data-c="'+esc(k).replace(/"/g,"&quot;")+'">'+(ask?'再按一次刪除 ✕':esc(k)+' ×'+t[k]+' ✕')+'</button>';}).join("");
+    var ci=state.songs.indexOf(s)%COLORS.length;
+    return '<div class="card" id="song-'+s.id+'"><div class="bar-top"><div>'+nameHtml(s)+albumHtml(s)+'</div><button class="del'+(pendingDel===s.id?' ask':'')+'" data-a="del" data-id="'+s.id+'" aria-label="刪除">'+(pendingDel===s.id?'再按一次刪除':'✕')+'</button></div>'
+    +'<div class="track"><div class="fill" style="width:'+w+'%;background:'+COLORS[ci]+'">'+(n?'♥':'')+'</div></div>'
+    +'<div class="ctl"><button data-a="minus" data-id="'+s.id+'" aria-label="減少">−</button><span class="cnt">'+n+'</span><button class="plus" data-a="plus" data-id="'+s.id+'" aria-label="增加">＋</button><div class="tags">'+tags+'</div></div></div>';
+  }).join("");
+  var ai=document.querySelector(".ain,.nin");if(ai&&document.activeElement!==ai)ai.focus();
+  if(pendingDel||pendingTag){clearTimeout(pT);pT=setTimeout(function(){if(pendingDel||pendingTag){pendingDel=null;pendingTag=null;render();}},3500);}
+}
+function find(id){return state.songs.filter(function(s){return String(s.id)===String(id);})[0];}
+var DB=[
+["ARIRANG (2026)","Body to Body|Hooligan|Aliens|FYA|2.0|No. 29|SWIM|Merry Go Round|NORMAL|Like Animals|they don’t know ’bout us|One More Night|Please|Into the Sun|ARMYRANG|ARMYRANG²"],
+["2 COOL 4 SKOOL (2013)","No More Dream|We Are Bulletproof Pt.2|Like|Outro: Circle Room Cypher|Hip Hop Phile"],
+["O!RUL8,2? (2013)","N.O|We On|Attack on Bangtan|Coffee|BTS Cypher Pt.1|Paldogangsan|If I Ruled the World"],
+["Skool Luv Affair (2014)","Boy In Luv|Just One Day|Tomorrow|BTS Cypher Pt.2: Triptych|Spine Breaker|Jump"],
+["Dark&Wild (2014)","Danger|War of Hormone|Let Me Know|Rain|Blanket Kick|24/7=Heaven|Look Here|Embarrassed|Does That Make Sense|Could You Turn Off Your Cellphone|BTS Cypher Pt.3: Killer"],
+["花樣年華 Pt.1 (2015)","I Need U|Dope|Boyz with Fun|Converse High|Moving On|Outro: Love Is Not Over"],
+["花樣年華 Pt.2 (2015)","Run|Butterfly|Whalien 52|Ma City|Silver Spoon|Baepsae|Autumn Leaves|House of Cards"],
+["花樣年華 Young Forever (2016)","Fire|Save ME|Epilogue: Young Forever"],
+["WINGS (2016)","Blood Sweat & Tears|Lie|Stigma|First Love|Reflection|MAMA|Awake|Lost|BTS Cypher 4|Am I Wrong|21st Century Girls|Two! Three!|Interlude: Wings|Begin|Where You From"],
+["You Never Walk Alone (2017)","Spring Day|Not Today|A Supplementary Story: You Never Walk Alone|Outro: Wings"],
+["LOVE YOURSELF 承 Her (2017)","DNA|Best of Me|Dimple|Pied Piper|MIC Drop|Go Go|Outro: Her|Intro: Serendipity|Serendipity"],
+["LOVE YOURSELF 轉 Tear (2018)","Fake Love|Singularity|The Truth Untold|Airplane pt.2|Anpanman|134340|Magic Shop|Outro: Tear|Love Maze"],
+["LOVE YOURSELF 結 Answer (2018)","Idol|Euphoria|Epiphany|I’m Fine|Answer: Love Myself|Trivia 起: Just Dance|Trivia 轉: Seesaw|Trivia 承: Love"],
+["MAP OF THE SOUL: PERSONA (2019)","Boy With Luv|Intro: Persona|Mikrokosmos|Make It Right|HOME|Jamais Vu|Dionysus"],
+["MAP OF THE SOUL: 7 (2020)","ON|Black Swan|Filter|My Time|Louder than bombs|UGH!|Zero O’Clock|Inner Child|Friends|Moon|We are Bulletproof: the Eternal|Outro: Ego|Interlude: Shadow|Respect"],
+["BE (2020)","Life Goes On|Dynamite|Blue & Grey|Telepathy|Fly To My Room|Stay|Dis-ease"],
+["Butter (2021 單曲)","Butter"],
+["Permission to Dance (2021 單曲)","Permission to Dance"],
+["Proof (2022)","Yet To Come|Run BTS|For Youth"],
+["Take Two (2023 單曲)","Take Two"]
+];
+function nk(s){return String(s).toLowerCase().replace(/[^\p{L}\p{N}]/gu,"");}
+var MAP={};DB.forEach(function(a){a[1].split("|").forEach(function(n){MAP[nk(n)]=a[0];});});
+var ALIAS={"春日":"Spring Day","봄날":"Spring Day","血汗淚":"Blood Sweat & Tears","피땀눈물":"Blood Sweat & Tears"};
+function albumOf(s){if(s.album)return s.album;var k=nk(s.name);if(ALIAS[k])k=nk(ALIAS[k]);return MAP[k]||"";}
+var PRESETS=["Bangkok 2026/12/3","Bangkok 2026/12/5","Bangkok 2026/12/6","Kuala Lumpur 2026/12/12","Kuala Lumpur 2026/12/13","Singapore 2026/12/17","Singapore 2026/12/19","Singapore 2026/12/20","Singapore 2026/12/22","Jakarta 2026/12/26","Jakarta 2026/12/27","Jakarta 2026/12/29","Melbourne 2027/2/10","Melbourne 2027/2/12","Melbourne 2027/2/13","Sydney 2027/2/20","Sydney 2027/2/21","Hong Kong 2027/3/4","Hong Kong 2027/3/6","Hong Kong 2027/3/7","Bulacan 2027/3/13","Bulacan 2027/3/14","Bulacan 2027/3/16"];
+function cinfo(c){var i=c.lastIndexOf(" "),m=c.slice(i+1).match(/^(\d+)\/(\d+)\/(\d+)$/),city=i<0?"":c.slice(0,i);return {c:c,d:m?(+m[1])*10000+(+m[2])*100+(+m[3]):99999999,lab:m?(m[0]+(city?" "+city:"")):c};}
+var editAlbum=null,editName=null,editBuf=null,editStart=0;
+function nameHtml(s){
+  if(editName===s.id)return '<input class="nin" data-id="'+s.id+'" value="'+esc(editBuf!==null?editBuf:s.name).replace(/"/g,"&quot;")+'" placeholder="輸入歌名後按 Enter">';
+  return '<button class="name nbtn" data-a="rename" data-id="'+s.id+'">'+esc(s.name)+'</button>';}
+function commitName(inp){var s=find(inp.dataset.id);editName=null;if(!s)return;var v=(editBuf!==null?editBuf:inp.value).trim();editBuf=null;
+  if(v&&v!==s.name){if(state.songs.some(function(o){return o!==s&&nk(o.name)===nk(v);})){showMsg("此歌已在歌單中");}else{s.name=v;save();}}
+  render();}
+function albumHtml(s){var al=albumOf(s);
+  if(editAlbum===s.id)return '<input class="ain" data-id="'+s.id+'" value="'+esc(editBuf!==null?editBuf:al).replace(/"/g,"&quot;")+'" placeholder="輸入專輯名稱後按 Enter">';
+  return '<button class="album'+(al?'':' none')+'" data-a="album" data-id="'+s.id+'">'+(al?'💿 '+esc(al):'＋ 填寫專輯')+'</button>';}
+function commitAlbum(inp){var s=find(inp.dataset.id);if(!s)return;s.album=(editBuf!==null?editBuf:inp.value).trim();editBuf=null;editAlbum=null;save();render();}
+document.getElementById("list").addEventListener("keydown",function(e){var t=e.target;if(e.key==="Enter"&&!e.isComposing&&e.keyCode!==229){if(t.classList.contains("nin")&&editName!==null){e.preventDefault();commitName(t);}else if(t.classList.contains("ain")&&editAlbum!==null){e.preventDefault();commitAlbum(t);}}});
+document.getElementById("list").addEventListener("input",function(e){if(e.target.classList.contains("nin")||e.target.classList.contains("ain"))editBuf=e.target.value;});
+document.getElementById("list").addEventListener("focusout",function(e){if((editName!==null||editAlbum!==null)&&Date.now()-editStart<400){var q=e.target;setTimeout(function(){if(q.isConnected)q.focus();},0);return;}if(e.target.classList.contains("ain")&&editAlbum!==null)commitAlbum(e.target);else if(e.target.classList.contains("nin")&&editName!==null)commitName(e.target);});
+var pendingDel=null,pendingTag=null,pT=null;
+document.addEventListener("click",function(e){if((pendingDel||pendingTag)&&!e.target.closest('[data-a="del"],[data-a="deltag"]')){pendingDel=null;pendingTag=null;render();}});
+document.getElementById("list").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(!b)return;var s=find(b.dataset.id);if(!s)return;var wasDel=pendingDel,wasTag=pendingTag;pendingDel=null;pendingTag=null;
+  if(b.dataset.a==="plus")s.log.push(state.filter||state.concert.trim());
+  else if(b.dataset.a==="minus"){if(state.filter){var ix=s.log.lastIndexOf(state.filter);if(ix>-1)s.log.splice(ix,1);}else s.log.pop();}
+  else if(b.dataset.a==="deltag"){var ck=b.dataset.c==="未註明"?"":b.dataset.c,pk2=s.id+"|"+b.dataset.c;if(wasTag===pk2){s.log=s.log.filter(function(x){return x!==ck;});}else{pendingTag=pk2;}}
+  else if(b.dataset.a==="rename"){editName=s.id;editBuf=null;editStart=Date.now();}
+  else if(b.dataset.a==="album"){editAlbum=s.id;editBuf=null;editStart=Date.now();}
+  else if(b.dataset.a==="del"){if(wasDel===s.id){state.songs=state.songs.filter(function(x){return x!==s;});}else{pendingDel=s.id;}}
+  save();render();
+});
+document.getElementById("concertSel").addEventListener("change",function(e){
+  var c=e.target.value;if(!c)return;state.concert=c;var i=c.lastIndexOf(" ");var m=c.slice(i+1).match(/^(\d+)\/(\d+)\/(\d+)$/);if(m){state.city=i<0?"":c.slice(0,i);state.date=m[1]+"-"+("0"+m[2]).slice(-2)+"-"+("0"+m[3]).slice(-2);}else{state.city=c;state.date="";}save();render();
+});
+function fmtDate(d){var p=(d||"").split("-");return p.length===3?p[0]+"/"+(+p[1])+"/"+(+p[2]):"";}
+function updConcert(){state.concert=((state.city||"").trim()+" "+fmtDate(state.date)).trim();save();render();}
+document.getElementById("city").addEventListener("input",function(e){state.city=e.target.value;updConcert();});
+document.getElementById("cdate").addEventListener("change",function(e){state.date=e.target.value;updConcert();});
+function jumpTo(s){var el=document.getElementById("song-"+s.id);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("flash");setTimeout(function(){el.classList.remove("flash");},2000);}}
+var msgT=null;
+function showMsg(t){var m=document.getElementById("msg");m.textContent=t;clearTimeout(msgT);msgT=setTimeout(function(){m.textContent="";},3000);}
+function addSong(){var i=document.getElementById("newSong"),v=i.value.trim();if(!v)return;
+  var dup=state.songs.filter(function(s){return nk(s.name)===nk(v);})[0];
+  if(dup){showMsg("此歌已在歌單中");i.value="";i.blur();if(state.filter&&lg(dup).length===0){state.filter="";save();}render();var el=document.getElementById("song-"+dup.id);if(el){el.scrollIntoView({behavior:"smooth",block:"center"});el.classList.add("flash");setTimeout(function(){el.classList.remove("flash");},2000);}return;}
+  var ns={id:Date.now(),name:v,log:[]};state.songs.push(ns);state.filter="";i.value="";i.blur();save();render();jumpTo(ns);}
+document.getElementById("addBtn").addEventListener("click",addSong);
+document.getElementById("newSong").addEventListener("keydown",function(e){if(e.key==="Enter")addSong();});
+document.getElementById("sortBtn").addEventListener("click",function(){state.sort=!state.sort;save();render();});
+render();
+document.getElementById("filterChips").addEventListener("change",function(e){state.filter=e.target.value;save();render();});
+document.getElementById("expBtn").addEventListener("click",function(){var t=document.getElementById("bk");t.value=JSON.stringify(state);t.focus();t.select();});
+document.getElementById("impBtn").addEventListener("click",function(){var t=document.getElementById("bk");try{var d=JSON.parse(t.value);if(!d||!Array.isArray(d.songs))throw 0;state=Object.assign(state,d);save();render();t.value="";t.placeholder="已還原 ✓";}catch(e){t.placeholder="格式不正確，請貼上完整的備份文字";}});
+</script>
+</body>
+</html>
